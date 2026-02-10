@@ -1,20 +1,20 @@
+/ 1. PROJECT CONFIGURATION
+// Be careful: URL must start with https:// and end in .supabase.co
+const SB_URL = 'https://lkgqzieviqtrsoeffbnq.supabase.co'; 
+const SB_KEY = 'sb_publishable_so26fUecpMp_T3vyzJJnXQ_T0wEkOyU';
 
-// Initialize Supabase Client
-// REPLACE with your actual Supabase URL and Logic
-const SUPABASE_URL = 'sb_publishable_so26fUecpMp_T3vyzJJnXQ_T0wEkOyU';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxrZ3F6aWV2aXF0cnNvZWZmYm5xIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA2Mzc0NDMsImV4cCI6MjA4NjIxMzQ0M30.GCRZALURGsMl3mX94JpCV7v-zr2Yl70zzLBWK_-JmH8';
+// 2. INITIALIZE CLIENT (The CDN Method)
+// We use window.supabase because the CDN script creates a global 'supabase' object
+const { createClient } = window.supabase;
+const supabase = createClient(SB_URL, SB_KEY);
 
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-// Auth Helpers
+// --- AUTH HELPERS ---
 async function signUp(email, password, fullName) {
     const { data, error } = await supabase.auth.signUp({
         email: email,
         password: password,
         options: {
-            data: {
-                full_name: fullName
-            }
+            data: { full_name: fullName }
         }
     });
     return { data, error };
@@ -33,8 +33,9 @@ async function signOut() {
     return { error };
 }
 
-// Data Helpers
+// --- DATA HELPERS ---
 async function fetchCourses() {
+    // IMPORTANT: Make sure you have a table named 'courses' in Supabase
     const { data, error } = await supabase.from('courses').select('*');
     return { data, error };
 }
@@ -51,7 +52,6 @@ async function fetchEnrollments() {
         `)
         .eq('user_id', user.id);
 
-    // Flatten structure for easier consumption
     const courses = data ? data.map(e => e.course) : [];
     return { data: courses, error };
 }
@@ -62,9 +62,7 @@ async function enrollUser(courseId) {
 
     const { data, error } = await supabase
         .from('enrollments')
-        .insert([
-            { user_id: user.id, course_id: courseId }
-        ]);
+        .insert([{ user_id: user.id, course_id: courseId }]);
 
     return { data, error };
 }
@@ -78,8 +76,7 @@ async function checkEnrollment(courseId) {
         .select('id')
         .eq('user_id', user.id)
         .eq('course_id', courseId)
-        .single();
+        .maybeSingle(); // maybeSingle is safer than .single() if no data exists
 
-    return !!data; // True if enrollment exists
+    return !!data; 
 }
-
