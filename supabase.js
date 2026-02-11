@@ -81,22 +81,48 @@ async function checkEnrollment(courseId) {
 
     return !!data; 
 } */
-// supabase.js
+// supabase.js - Production Connection
 const SB_URL = 'https://lkgqzieviqtrsoeffbnq.supabase.co'; 
 const SB_KEY = 'sb_publishable_so26fUecpMp_T3vyzJJnXQ_T0wEkOyU';
 
-// Access the library from the CDN
+// 1. Initialize from CDN global object
 const { createClient } = window.supabase;
-
-// This line is the "Fix": It makes the connection global
 window.supabase = createClient(SB_URL, SB_KEY);
-
-// Use a local alias so the helper functions below still work
 const _supabase = window.supabase; 
 
-// Now all your helper functions (signUp, signIn) should use _supabase
+// --- AUTH HELPERS ---
+
+// SIGN UP: Use this for your Register page
 async function signUp(email, password, fullName) {
-    return await _supabase.auth.signUp({ email, password, options: { data: { full_name: fullName } } });
+    const { data, error } = await _supabase.auth.signUp({ 
+        email, 
+        password, 
+        options: { data: { full_name: fullName } } 
+    });
+    return { data, error };
+}
+
+// SIGN IN: Use this for your Login page
+async function signIn(email, password) {
+    const { data, error } = await _supabase.auth.signInWithPassword({
+        email,
+        password
+    });
+    return { data, error };
+}
+
+// SIGN OUT
+async function signOut() {
+    const { error } = await _supabase.auth.signOut();
+    return { error };
+}
+
+// --- DATA HELPERS ---
+
+// GET COURSES: Use this for your home page
+async function fetchCourses() {
+    const { data, error } = await _supabase.from('courses').select('*');
+    return { data, error };
 }
 
 
