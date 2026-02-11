@@ -1,52 +1,52 @@
 // 1. PROJECT CONFIGURATION
-const SB_URL = 'https://lkgqzieviqtrsoeffbnq.supabase.co'; 
-const SB_KEY = 'sb_publishable_so26fUecpMp_T3vyzJJnXQ_T0wEkOyU';
+//const SB_URL = 'https://lkgqzieviqtrsoeffbnq.supabase.co'; 
+//const SB_KEY = 'sb_publishable_so26fUecpMp_T3vyzJJnXQ_T0wEkOyU';
 
 // 2. INITIALIZE CLIENT
 // Use window.supabase from the CDN to create the client
-const { createClient } = window.supabase;
+//const { createClient } = window.supabase;
 
 // We name it _supabase and attach to window so script.js can use it
-window.supabase = createClient(SB_URL, SB_KEY);
-const _supabase = window.supabase; 
+//window.supabase = createClient(SB_URL, SB_KEY);
+//const _supabase = window.supabase; 
 
 // --- AUTH HELPERS ---
-async function signUp(email, password, fullName) {
-    const { data, error } = await _supabase.auth.signUp({
-        email: email,
-        password: password,
-        options: {
+//async function signUp(email, password, fullName) {
+  //  const { data, error } = await _supabase.auth.signUp({
+ //      email: email,
+//        password: password,
+     //   options: {
             data: { full_name: fullName }
-        }
-    });
-    return { data, error };
-}
+   //     }
+ //   });
+  //  return { data, error };
+//}
 
-async function signIn(email, password) {
-    const { data, error } = await _supabase.auth.signInWithPassword({
-        email: email,
-        password: password
-    });
-    return { data, error };
-}
+//async function signIn(email, password) {
+   // const { data, error } = await _supabase.auth.signInWithPassword({
+        //email: email,
+        //password: password
+ //  });
+   // return { data, error };
+//}
 
-async function signOut() {
-    const { error } = await _supabase.auth.signOut();
-    return { error };
-}
+//async function signOut() {
+    //const { error } = await _supabase.auth.signOut();
+  //  return { error };
+//}
 
 // --- DATA HELPERS ---
-async function fetchCourses() {
-    const { data, error } = await _supabase.from('courses').select('*');
-    return { data, error };
-}
+//async function fetchCourses() {
+   // const { data, error } = await _supabase.from('courses').select('*');
+   // return { data, error };
+//}
 
-async function fetchEnrollments() {
-    const { data: { user } } = await _supabase.auth.getUser();
-    if (!user) return { data: [], error: 'Not logged in' };
+//async function fetchEnrollments() {
+   // const { data: { user } } = await _supabase.auth.getUser();
+   // if (!user) return { data: [], error: 'Not logged in' };
 
-    const { data, error } = await _supabase
-        .from('enrollments')
+   // const { data, error } = await _supabase
+   /*     .from('enrollments')
         .select(`
             *,
             course:courses(*)
@@ -80,7 +80,26 @@ async function checkEnrollment(courseId) {
         .maybeSingle(); 
 
     return !!data; 
+} */
+// supabase.js
+const SB_URL = 'https://lkgqzieviqtrsoeffbnq.supabase.co'; 
+const SB_KEY = 'sb_publishable_so26fUecpMp_T3vyzJJnXQ_T0wEkOyU';
+
+// Access the library from the CDN
+const { createClient } = window.supabase;
+
+// This line is the "Fix": It makes the connection global
+window.supabase = createClient(SB_URL, SB_KEY);
+
+// Use a local alias so the helper functions below still work
+const _supabase = window.supabase; 
+
+// Now all your helper functions (signUp, signIn) should use _supabase
+async function signUp(email, password, fullName) {
+    return await _supabase.auth.signUp({ email, password, options: { data: { full_name: fullName } } });
 }
+
+
 
 
 
