@@ -16,7 +16,7 @@
  //      email: email,
 //        password: password,
      //   options: {
-            data: { full_name: fullName }
+          //  data: { full_name: fullName }
    //     }
  //   });
   //  return { data, error };
@@ -98,6 +98,7 @@ const _supabase = window.supabase;
 async function signUp(email, password, fullName) {
     return await _supabase.auth.signUp({ email, password, options: { data: { full_name: fullName } } });
 }
+
 
 
 
